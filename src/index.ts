@@ -6,7 +6,7 @@ export function rawData() {
   // this bit strips the protocol away from referrer, since psl doesn't want that
   const referrer = document.referrer;
   // get only the top level domain of referrer
-  const referringDomain = getDomain_(referrer);
+  const referringDomain = referrer ? getDomain_(referrer) : null;
   // get url parameters
   const urlParams = new URLSearchParams(window.location.search);
   // then turn them into an object with key: value pairs
@@ -19,7 +19,7 @@ export function rawData() {
   const searchEngineData = getSearchEngineData(referringDomain, urlParamsObject, searchEngineConfig);
   // set referring domain if present
   const referralData = referringDomain == null ? null : { medium: "referral", source: referringDomain };
-  
+
 
   return {
     'this_hostname': document.location.origin || "localhost",
@@ -100,7 +100,7 @@ function getSearchEngineData(referringDomain: string, urlParamsObject: urlParams
       returnData['term'] = urlParamsObject[search_p];
 
     return returnData;
-  } 
+  }
 
   // This bit takes only those searchEngineConfigs where regex == true
   // if referring domain isn't otherwise found, we will match against regex, but only then
@@ -131,7 +131,7 @@ interface paidUrlParamsInterface {
 
 
 /*
- * Check the URL parameters for known click ID's. 
+ * Check the URL parameters for known click ID's.
  * If found, return the source and cpc/cpm
  */
 
@@ -164,7 +164,7 @@ export function get() {
       'source': '(direct)',
       'medium': '(none)',
       'campaign': '(not set)'
-    };  
+    };
 }
 
 function getDomain_(url: string) {
@@ -173,10 +173,10 @@ function getDomain_(url: string) {
   var h = u.hostname;
   var s = h.split('.');
   var sl = s.slice(-2);
-  
+
   if (['com', 'co'].includes(sl[0]) && sl.join('').length <= 5) {
   	return s.slice(-3).join('.');
   }
-  
+
   return s.slice(-2).join('.');
 }
